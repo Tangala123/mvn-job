@@ -19,7 +19,7 @@ pipeline {
               }
             }    
         }
-        stage ( 'Docker Deploy' ) {
+        stage ('Docker Deploy') {
             steps {
                 sshagent(['docker-host']) {
                  sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.89.94 docker run -d -p 8080:8080 --name mvn-job tangalalakshmi/mvn-job:0.0.2"   
