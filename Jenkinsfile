@@ -2,27 +2,21 @@ pipeline {
     agent any
     stages {
         stage ('Maven Build') {
-            when {
-                branch 'develop'
-            }
-            steps {
+          steps {
                 sh "mvn clean package"
             }
         }
-        stage ('Tomcat Deploy - Dev') {
-            when {  
-                 branch 'develop'
-            }
-            steps {
-                echo " Deploying the develop "
+        stage ('Docker Build') {
+           steps {
+                sh " docker build -t tangalalakshmi/mvn-job:0.0.2 . "
             }
         }
-        stage ('Tomcat Deploy -Prod') {
-            when {
-                branch 'main'
-            }
-            steps {
-                echo " Deploying the production "
+        stage ('Docker push') {
+           steps {
+              withCredentials([string(credentialsId: 'docker-hub', variable: 'hubpwd')]) {
+                  sh " docker login -u tangalalakshmi -p ${hubpwd} "
+                  sh " docker push tangalalakshmi/mvn-job:0.0.2 "
+              }
             }    
         }
     }   
